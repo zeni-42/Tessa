@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"tessa/internal/model"
@@ -23,14 +24,43 @@ func getHomeDir() string {
 	return path
 }
 
+// A public function which checks if the application is already configured or not
 func IsConfigured() bool {
-	return false
+	path := getHomeDir()
+	dirName := "."+NAME
+	configFile := filepath.Join(path, dirName, "config.jsonc");
+	databaseFile := filepath.Join(path, dirName, "database.db");
+	
+	if _, err := os.Stat(configFile); err != nil {
+		fmt.Println("configuring..")
+		return false
+	}
+	
+	if _, err := os.Stat(databaseFile); err != nil {
+		fmt.Println("configuring..");
+		return false
+	}
+	
+	return true
 }
 
-func createFiles(_ string) bool {
-	return false
+// Create the required files like configuration and database file
+func createFiles(path string) bool {
+	configFile := filepath.Join(path, "config.jsonc")
+	databaseFile := filepath.Join(path, "database.db")
+
+	if _, err := os.Create(configFile); err != nil {
+		getE().ShowWarning("failed to create configuration")
+		return false
+	}
+	if _, err := os.Create(databaseFile); err != nil {
+		getE().ShowWarning("failed to create database")
+		return false
+	}
+	return true
 }
 
+// A private function which create the required directories for the application
 func createDir() string {
 	path := getHomeDir()
 	dirName := "."+NAME
@@ -43,6 +73,7 @@ func createDir() string {
 	return newPath;
 }
 
+// A public function which internally calls the required fuctions to configure the application for the first time
 func Configure() {
 	path := createDir()
 	res := createFiles(path)
