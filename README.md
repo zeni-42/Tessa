@@ -1,2 +1,2 @@
 # Tessa
-A clipboard for hyprland
+A clipboard manager for hyprland

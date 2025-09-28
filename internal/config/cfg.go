@@ -81,3 +81,11 @@ func Configure() {
 		getE().ShowError("failed to configure")
 	}
 }
+
+// A public function which get database file path for sqlite3 
+func GetDBPath() string {
+	path := getHomeDir()
+	dir := "."+NAME
+	databasePath := filepath.Join(path, dir, "database.db")
+	return databasePath
+}
