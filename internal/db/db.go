@@ -32,11 +32,9 @@ func Init() error {
 			updated_at	DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 	`
-
 	if _, err := DB.Exec(sqlStmt); err != nil {
 		return err
 	}
-
 	return nil	
 }
 

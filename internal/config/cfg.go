@@ -10,16 +10,12 @@ import (
 const (
 	NAME = "tessa"
 )
-
-func getE() *model.Err {
-	e := &model.Err{}
-	return e
-}
+var e = &model.Err{}
 
 func getHomeDir() string {
 	path, err := os.UserHomeDir()
 	if err != nil {
-		getE().ShowWarning(err.Error())
+		e.ShowWarning(err.Error())
 	}
 	return path
 }
@@ -50,11 +46,11 @@ func createFiles(path string) bool {
 	databaseFile := filepath.Join(path, "database.db")
 
 	if _, err := os.Create(configFile); err != nil {
-		getE().ShowWarning("failed to create configuration")
+		e.ShowWarning("failed to create configuration")
 		return false
 	}
 	if _, err := os.Create(databaseFile); err != nil {
-		getE().ShowWarning("failed to create database")
+		e.ShowWarning("failed to create database")
 		return false
 	}
 	return true
@@ -67,7 +63,7 @@ func createDir() string {
 	newPath := filepath.Join(path, dirName)
 
 	if err := os.MkdirAll(newPath, 0700); err != nil {
-		getE().ShowWarning(err.Error())
+		e.ShowWarning(err.Error())
 	}
 
 	return newPath;
@@ -75,10 +71,11 @@ func createDir() string {
 
 // A public function which internally calls the required fuctions to configure the application for the first time
 func Configure() {
+
 	path := createDir()
 	res := createFiles(path)
 	if !res {
-		getE().ShowError("failed to configure")
+		e.ShowError("failed to configure")
 	}
 }
 
