@@ -40,6 +40,10 @@ func main() {
 	switch command {
 		case "save":
 			data := ParseArgs(args[2:])
+			if strings.TrimSpace(data) == "" {
+				e.ShowWarning("message cannot be empty")
+				return
+			}
 			if err := db.SaveData(data); err != nil {
 				fmt.Printf("%v\n", err);
 				e.ShowError("failed to save data")
