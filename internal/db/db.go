@@ -90,6 +90,20 @@ func CleanData() error {
 	return nil
 }
 
+func GetDataById(id int) (Clipboard, error) {
+	sqlStml := `SELECT id, data FROM tessa WHERE id = $1;`
+
+	var row Clipboard
+	if err := DB.QueryRow(sqlStml, id).Scan(
+		&row.Id,
+		&row.Data,
+	); err != nil {
+		return Clipboard{}, err
+	}
+
+	return row, nil
+}
+
 // Closes any existing database connection (must be called with 'defer' keyword)
 func CloseCon() {
 	DB.Close()

@@ -3,6 +3,7 @@ module tessa
 go 1.25.1
 
 require (
+	github.com/atotto/clipboard v0.1.4
 	github.com/fatih/color v1.18.0
 	github.com/mattn/go-sqlite3 v1.14.32
 )

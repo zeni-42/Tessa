@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"tessa/internal/config"
 	"tessa/internal/db"
 	"tessa/internal/model"
 
+	"github.com/atotto/clipboard"
 	"github.com/fatih/color"
 )
 
@@ -43,18 +45,41 @@ func main() {
 				e.ShowError("failed to save data")
 			}
 			e.ShowRes("cool")
-		case "get":
+		case "show":
 			if len(args) >= 3 {
-				e.ShowInfo("get requires no args")
+				e.ShowInfo("show requires no args")
 			}
 			storedData, err := db.GetData()
+			if len(storedData) == 0 {
+				e.ShowWarning("no previous data")
+			}
+
 			if err != nil {
 				e.ShowWarning("something is wrong lets debug!")
 				fmt.Println(err.Error())
 			}
 			for _, indiData := range storedData {
-				fmt.Printf("%d. %s\n", indiData.Id, indiData.Data)
+				fmt.Printf("%d) %s\n", indiData.Id, indiData.Data)
 			}
+		case "get":
+			if len(args) != 3 {
+				e.ShowWarning("expecting two args, got more")
+			}
+			strNo, err := strconv.Atoi(args[2])
+			if err != nil {
+				e.ShowError("invalid args")
+			}
+
+			res, err := db.GetDataById(strNo)
+			if err != nil {
+				e.ShowError("failed to retieve data")
+			}
+
+			if err := clipboard.WriteAll(res.Data); err != nil {
+				e.ShowError("failed to save data")
+			}
+
+			e.ShowRes("copied")
 		case "clean":
 			if err := db.CleanData(); err != nil {
 				e.ShowWarning(err.Error())
