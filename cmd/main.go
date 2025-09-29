@@ -7,18 +7,9 @@ import (
 	"tessa/internal/config"
 	"tessa/internal/db"
 	"tessa/internal/model"
-)
 
-func ParseCommands(s string) string {
-	switch s {
-		case "-s":
-			return "save"
-		case "-g":
-			return "get"
-		default:
-			return ""
-	}
-}
+	"github.com/fatih/color"
+)
 
 func ParseArgs(s []string) string {
 	return strings.Join(s, " ")
@@ -38,13 +29,44 @@ func main() {
 		e.ShowError("database init failed")
 	}
 
-	command := ParseCommands(os.Args[1]);
-	if command == "" {
-		newMsg := "command not found: " + os.Args[1];
-		e.ShowWarning(newMsg);
+	args := os.Args;
+	if len(args) == 1 {
+		e.ShowWarning("not enough arguments")
 	}
-	
-	pureString := ParseArgs(os.Args[2:])
 
-	fmt.Printf("%s\n", pureString)
+	command := args[1];
+	switch command {
+		case "save":
+			data := ParseArgs(args[2:])
+			if err := db.SaveData(data); err != nil {
+				fmt.Printf("%v\n", err);
+				e.ShowError("failed to save data")
+			}
+			e.ShowRes("cool")
+		case "get":
+			if len(args) >= 3 {
+				e.ShowInfo("get requires no args")
+			}
+			storedData, err := db.GetData()
+			if err != nil {
+				e.ShowWarning("something is wrong lets debug!")
+				fmt.Println(err.Error())
+			}
+			for _, indiData := range storedData {
+				fmt.Printf("%d. %s\n", indiData.Id, indiData.Data)
+			}
+		case "clean":
+			if err := db.CleanData(); err != nil {
+				e.ShowWarning(err.Error())
+			}
+			e.ShowRes("cleared")
+		case "whoisdeno":
+			fmt.Printf("\n")
+			fmt.Println("-------------- DENO --------------")
+			color.Cyan(">> https://www.github.com/zeni-42")
+			fmt.Printf("\n")
+		default:
+			newMsg := "command not found: " + args[1];
+			e.ShowWarning(newMsg);
+	}
 }

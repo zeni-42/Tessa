@@ -11,18 +11,28 @@ type Err struct {
 }
 
 func (e *Err) ShowInfo(message string) {
-	e.message = message
+	updatedMsg := "INFO: " + message
+	e.message = updatedMsg
 	color.Blue(e.message)
 }
 
+func (e *Err) ShowRes(message string) {
+	updatedMsg := ">> " + message
+	e.message = updatedMsg
+	color.Green(e.message)
+	os.Exit(0)
+}
+
 func (e *Err) ShowWarning(message string) {
-	e.message = message
+	updatedMsg := "WARN: " + message
+	e.message = updatedMsg
 	color.Yellow(e.message)
 	os.Exit(0)
 }
 
 func (e *Err) ShowError(message string) {
-	e.message = message
+	updatedMsg := "FATAL: " + message
+	e.message = updatedMsg
 	color.Red(e.message)
 	os.Exit(0)
 }
